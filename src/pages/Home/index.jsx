@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "../Home/style.css";
+import * as requestAPI from "../../helpers/api";
 
 const Home = () => {
   const [menus, setMenus] = useState([]);
@@ -16,22 +17,39 @@ const Home = () => {
     handleGetMenus();
   }, [paging.currentPage]);
 
-  const handleGetMenus = () => {
-    axios
-      .get(
-        `
-      https://api.mudoapi.tech/menus?name=&type=&perPage=10&page=${paging.currentPage}`
-      )
-      .then((res) => {
-        console.log(res);
-        setMenus(res.data.data.Data);
-        setPaging({
-          currentPage: res.data.data.currentPage,
-          previousPage: res.data.data.previousPage,
-          nextPage: res.data.data.nextPage,
-        });
-      })
-      .catch((err) => console.log(err));
+  //kode yg sebelumnya pake synchronus
+
+  // const handleGetMenus = () => {
+  //   axios
+  //     .get(
+  //       `
+  //     https://api.mudoapi.tech/menus?name=&type=&perPage=10&page=${paging.currentPage}`
+  //     )
+  //     .then((res) => {
+  //       console.log(res);
+  //       setMenus(res.data.data.Data);
+  //       setPaging({
+  //         currentPage: res.data.data.currentPage,
+  //         previousPage: res.data.data.previousPage,
+  //         nextPage: res.data.data.nextPage,
+  //       });
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  // pake async buat mendahulukan sesuatu
+  const handleGetMenus = async () => {
+    try {
+      const res = await requestAPI.reqMenu(paging.currentPage);
+      setMenus(res.data.data.Data);
+      setPaging({
+        currentPage: res.data.data.currentPage,
+        previousPage: res.data.data.previousPage,
+        nextPage: res.data.data.nextPage,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleDelete = (e, id) => {
