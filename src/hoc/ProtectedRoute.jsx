@@ -1,7 +1,13 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("accesToken");
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
   return <>{children || <Outlet />}</>;
 };
 
